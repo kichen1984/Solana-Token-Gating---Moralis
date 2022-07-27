@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>    
+</head>
+
+<body>
+    <script>
+        //import you server url and app id from your moralis account
+        const serverUrl = "yoururl";
+        const appId = "yourid";
+        Moralis.start({ serverUrl, appId });
+        /* Authentication code */
+        async function portfolio() {
+          await Moralis.authenticate({ signingMessage: "This is the auth message", type: 'sol' });
+          const response = await Moralis.SolanaAPI.account.getPortfolio();
+          console.log('response', response);
+          getSolMetadata();
+        }
+        let getSolMetadata = async () => {
+          const options = {
+            network: "mainnet",
+            address: "",
+          };
+          const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
+          console.log(nftBalance);
+        
+          if (nftBalance.length > 0) {
+            console.log("looking for metadata");
+            maxlength = "";
+            if (nftBalance.length > 20) {
+              maxlength = 20;
+            } else {
+              maxlength = nftBalance.length;
+            }
+              for (let i = 0; i < maxlength; i++) {
+                let nfthash = nftBalance[i].mint;
+                console.log(nfthash);
+                try {
+                  const options = {
+                    network: "mainnet",
+                    address: nfthash,
+                  }
+                  const metadata = await Moralis.SolanaAPI.nft.getNFTMetadata(options);  
+                    if (metadata.symbol === 'Symbol/Collection you want to gate ex DUCKS') {
+                      document.getElementById("whatever the page wrapper for your site is called by id").style.display = "block"};
+                      console.log(metadata.symbol);
+                      }
+                  catch(error) {
+                  console.log(error)
+                  }
+              }
+            }
+          }
+        
+        portfolio();
+        
+        </script>
+</body>
+
+</html>
